@@ -64,9 +64,9 @@ namespace AzureStorageBackupUtility
 
         public void OnReadingEntity(object sender, ReadingWritingEntityEventArgs args)
         {
-            XNamespace AtomNamespace = "http://www.w3.org/2005/Atom";
-            XNamespace AstoriaDataNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices";
-            XNamespace AstoriaMetadataNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata";
+            XNamespace atomNamespace = "http://www.w3.org/2005/Atom";
+            XNamespace dataServiceNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices";
+            XNamespace metadataNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata";
 
             TableGenericEntity entity = args.Entity as TableGenericEntity;
             if (entity == null)
@@ -76,15 +76,15 @@ namespace AzureStorageBackupUtility
 
             // read each property, type and value in the payload   
             var properties = args.Entity.GetType().GetProperties();
-            var q = from p in args.Data.Element(AtomNamespace + "content")
-                                    .Element(AstoriaMetadataNamespace + "properties")
+            var q = from p in args.Data.Element(atomNamespace + "content")
+                                    .Element(metadataNamespace + "properties")
                                     .Elements()
                     where properties.All(pp => pp.Name != p.Name.LocalName)
                     select new
                     {
                         Name = p.Name.LocalName,
-                        IsNull = string.Equals("true", p.Attribute(AstoriaMetadataNamespace + "null") == null ? null : p.Attribute(AstoriaMetadataNamespace + "null").Value, StringComparison.OrdinalIgnoreCase),
-                        TypeName = p.Attribute(AstoriaMetadataNamespace + "type") == null ? null : p.Attribute(AstoriaMetadataNamespace + "type").Value,
+                        IsNull = string.Equals("true", p.Attribute(metadataNamespace + "null") == null ? null : p.Attribute(metadataNamespace + "null").Value, StringComparison.OrdinalIgnoreCase),
+                        TypeName = p.Attribute(metadataNamespace + "type") == null ? null : p.Attribute(metadataNamespace + "type").Value,
                         p.Value
                     };
 
